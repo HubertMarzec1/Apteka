@@ -101,8 +101,8 @@ function addNewProduct(name, price, imageUrl) {
     // Dodawanie obrazka produktu
     const productImage = document.createElement('img');
     productImage.src = imageUrl;
-    productImage.style.width = '10%';
-    productImage.style.height = '10%';
+    productImage.style.width = '120px';
+    productImage.style.height = '120px';
     productContainer.appendChild(productImage);
 
     // Dodawanie nazwy produktu
@@ -157,8 +157,8 @@ function addNewProduct(name, price, imageUrl) {
 for (let i = 1; i <= 9; i++) {
     addNewProduct('Produkt '+i , 19.99 + i, 'img/cart-icon.png');
 }
+*/
 
-  */
 
 
 
