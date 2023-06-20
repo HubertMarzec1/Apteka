@@ -70,6 +70,23 @@ function updateCart() {
     cartTotal.textContent = `Suma: ${total.toFixed(2)} zł`;
 }
 
+const replacePolishLetters = (text) => {
+    const polishLetters = {
+        ą: 'a',
+        ć: 'c',
+        ę: 'e',
+        ł: 'l',
+        ń: 'n',
+        ó: 'o',
+        ś: 's',
+        ź: 'z',
+        ż: 'z',
+    };
+
+    return text
+        .toLowerCase()
+        .replace(/[ąćęłńóśźż]/g, (match) => polishLetters[match]);
+};
 
 
 // Zmniejszanie ilości produktu
@@ -93,7 +110,7 @@ function incrementQuantity(event) {
 }
 
 /*  DODAWNAIE PRODUKTÓW */
-function addNewProduct(name, price, imageUrl) {
+function addNewProduct(name, price, imageUrl, categories) {
     // Tworzenie kontenera produktu
     const productContainer = document.createElement('div');
     productContainer.classList.add('product');
@@ -149,7 +166,8 @@ function addNewProduct(name, price, imageUrl) {
     productContainer.appendChild(addToCartButton);
 
     // Dodawanie produktu do sekcji "products"
-    const productsSection = document.getElementById('products');
+    const categoryClass = replacePolishLetters(categories).replace(/\s/g, '');
+    const productsSection = document.getElementById(categoryClass);
     productsSection.appendChild(productContainer);
 }
 

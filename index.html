@@ -15,9 +15,11 @@
       <li class="dropdown">
         <a href="#products">Produkty</a>
         <div class="dropdown-content">
-          <a href="#">Kategoria 1</a>
-          <a href="#">Kategoria 2</a>
-          <a href="#">Kategoria 3</a>
+          <a href="#lekiprzeciwbolowe">Leki przeciwbólowe</a>
+          <a href="#antybiotyki">Antybiotyki</a>
+          <a href="#lekiprzeciwzapalne">Leki przeciwzapalne</a>
+          <a href="#suplementydiety">Suplementy diety</a>
+          <a href="#lekikardiologiczne">Leki kardiologiczne</a>
         </div>
       </li>
       <li><a href="#o-nas">O nas</a></li>
@@ -28,8 +30,6 @@
     </ul>
   </nav>
 </header>
-
-
 <!-- Modal dla koszyka -->
 <div id="cartModal" class="modal">
   <div class="modal-content">
@@ -42,7 +42,11 @@
 </div>
 
 <section id="products" class="hidden">
-  <!-- Zawartość sekcji "Produkty" -->
+  <section id="lekiprzeciwbolowe" class="category-section"></section>
+  <section id="antybiotyki" class="category-section"></section>
+  <section id="lekiprzeciwzapalne" class="category-section"></section>
+  <section id="suplementydiety" class="category-section"></section>
+  <section id="lekikardiologiczne" class="category-section"></section>
 </section>
 
 <section id="o-nas" class="hidden">
@@ -58,13 +62,32 @@
 <script src="script.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
 <script>
-  // Obsługa kliknięcia w linki nawigacji
   $(document).ready(function() {
     $('nav ul li a').click(function(e) {
       e.preventDefault();
       var target = $(this).attr('href');
-      $('.hidden').hide();
-      $(target).show();
+
+      // Ukrywanie wszystkich sekcji kategorii
+      $('.category-section').addClass('hidden');
+
+      // Wyświetlanie wybranej sekcji
+      $(target).removeClass('hidden');
+
+      var category = $(this).attr('href').substring(1);
+      if ($('#' + category).hasClass('category-section')) {
+        $('#products').removeClass('hidden');
+        $('#o-nas, #kontakt').addClass('hidden');
+      }
+
+      // Ukrywanie innych sekcji
+      if (target === '#products') {
+        $('#o-nas, #kontakt').addClass('hidden');
+        $('.category-section').removeClass('hidden');
+      } else if (target === '#o-nas') {
+        $('#products, #kontakt').addClass('hidden');
+      } else if (target === '#kontakt') {
+        $('#products, #o-nas').addClass('hidden');
+      }
     });
   });
 </script>
