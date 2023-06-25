@@ -3,9 +3,12 @@ const cartIcon = document.getElementById('cart-icon');
 const cartModal = document.getElementById('cartModal');
 const closeBtn = document.getElementsByClassName('close')[0];
 const closeBtnWysylka = document.getElementsByClassName('close')[1];
+const closeBtnOpis = document.getElementsByClassName('close')[2];
 
 const guzikWysylka = document.getElementById('recepta-button');
 const wysylkaModal = document.getElementById('shippingModal');
+
+const opisModal = document.getElementById('descriptionModal');
 
 // Obsługa kliknięcia na ikonę koszyka
 cartIcon.addEventListener('click', function() {
@@ -17,6 +20,10 @@ closeBtn.addEventListener('click', function() {
     cartModal.style.display = 'none'; // Ukrycie modala
 });
 
+closeBtnOpis.addEventListener('click', function() {
+    opisModal.style.display = 'none'; // Ukrycie modala
+});
+
 // Obsługa kliknięcia poza modalem, aby go zamknąć
 window.addEventListener('click', function(event) {
     if (event.target == cartModal) {
@@ -25,10 +32,12 @@ window.addEventListener('click', function(event) {
 });
 
 guzikWysylka.addEventListener('click', function() {
-    wysylkaModal.style.display = 'block'; // Wyświetlenie modala
+    wysylkaModal.style.display = 'none'; // Ukrycie modala
+    cartModal.style.display = 'block'; // Wyświetlenie modalaw
 });
 
 closeBtnWysylka.addEventListener('click', function() {
+    cartModal.style.display = 'none'; // Ukrycie modala
     wysylkaModal.style.display = 'none'; // Ukrycie modala
 });
 
@@ -51,12 +60,13 @@ function addToCart(event) {
         if (existingItem) {
             // Jeśli produkt już istnieje, zaktualizuj jego ilość
             existingItem.quantity += productQuantity;
+            updateItem(productId, existingItem.quantity);
         } else {
             // Jeśli produkt nie istnieje, dodaj go do koszyka
             const item = { id: productId, name: productName, price: productPrice, quantity: productQuantity };
             cartItems.push(item);
+            addItemToCart(productId, productQuantity);
         }
-        addItemToCart(productId, productQuantity);
         updateCart();
     }
 }
@@ -69,6 +79,7 @@ function updateCart() {
     cartList.innerHTML = '';
 
     let total = 0;
+
 
     cartItems.forEach(item => {
         const li = document.createElement('li');
@@ -138,7 +149,7 @@ function incrementQuantity(event) {
 }
 
 /*  DODAWNAIE PRODUKTÓW */
-function addNewProduct(id, name, price, imageUrl, categories) {
+function addNewProduct(id, name, price, imageUrl, categories, des) {
     // Tworzenie kontenera produktu
     const productContainer = document.createElement('div');
     productContainer.classList.add('product');
@@ -149,6 +160,14 @@ function addNewProduct(id, name, price, imageUrl, categories) {
     productImage.src = imageUrl;
     productImage.style.width = '120px';
     productImage.style.height = '120px';
+    productImage.setAttribute("des", des);
+    productImage.addEventListener('click', function() {
+        descriptionImg.src = imageUrl;
+        descriptionDiv.innerHTML = des;
+
+        opisModal.style.display = 'block';
+    });
+
     productContainer.appendChild(productImage);
 
     // Dodawanie nazwy produktu
@@ -158,7 +177,7 @@ function addNewProduct(id, name, price, imageUrl, categories) {
 
     // Dodawanie ceny produktu
     const productPrice = document.createElement('p');
-    productPrice.textContent = `Cena: ${price.toFixed(2)} zł`;
+    productPrice.textContent = `Cena: ${price/100} zł`;
     productContainer.appendChild(productPrice);
 
     // Dodawanie pola ilości
@@ -195,8 +214,6 @@ function addNewProduct(id, name, price, imageUrl, categories) {
     addToCartButton.addEventListener('click', addToCart);
     productContainer.appendChild(addToCartButton);
 
-
-
     // Dodawanie produktu do sekcji "products"
     const categoryClass = replacePolishLetters(categories).replace(/\s/g, '');
     const productsSection = document.getElementById(categoryClass);
@@ -228,6 +245,40 @@ document.getElementById("submit-shipping").addEventListener("click", () => {
         .catch(error => console.error('Błąd:', error));
 
 })
+
+document.getElementById("recepta-button").addEventListener("click", () => {
+    const url3 = 'https://pharmacy-umcs-2th7ejkd5a-lz.a.run.app/rx';
+
+    const item =
+        {
+            "code": document.getElementById('kod-input').value,
+            "pesel": document.getElementById('pesel-input').value
+        }
+
+    fetch(url3, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(item)
+    })
+        .then(response => response.text())
+        .then(result => {
+            cartItems = [];
+            console.log(result);
+            const data = JSON.parse(result);
+            data.items.forEach(item => {
+                const item2 = { id: item.product.id, name: item.product.name, price: item.product.price / 100, quantity: item.quantity };
+                cartItems.push(item2);
+            });
+
+            updateCart();
+        })
+        .catch(error => console.error('Błąd:', error));
+
+})
+
+
 
 /*
 for (let i = 1; i <= 9; i++) {

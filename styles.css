@@ -252,5 +252,11 @@ input::-webkit-inner-spin-button {
     display: block;
 }
 
+#descriptionImg
+{
+    height: 400px;
+    width: 400px;
+}
+
 
 

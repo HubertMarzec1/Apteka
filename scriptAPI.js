@@ -13,8 +13,9 @@ function fetchData() {
             return response.json();
         })
         .then(data => {
+            console.log(data);
             for (let i = 0; i < data.length; i++) {
-                    addNewProduct(data[i].id, data[i].name, data[i].price, data[i].imageURL, data[i].category)
+                    addNewProduct(data[i].id, data[i].name, data[i].price, data[i].imageURL, data[i].category, data[i].description)
             }
         })
         .catch(error => {
@@ -73,6 +74,7 @@ function removeItem(id) {
             "itemID": id
         };
 
+    console.log(id);
     const url3 = 'https://pharmacy-umcs-2th7ejkd5a-lz.a.run.app/cart/' + cartID + "/delete";
     console.log(url3);
 
@@ -90,13 +92,32 @@ function removeItem(id) {
         .catch(error => console.error('Błąd:', error));
 }
 
-function updateItem(id) {
+function updateItem(id, quantity) {
 
     console.log(id);
-    const itemsToUpdate =
-        {
-            "itemID": id
-        };
+
+    const url3 = 'https://pharmacy-umcs-2th7ejkd5a-lz.a.run.app/cart/' + cartID + "/update";
+
+    console.log("quantity" + quantity);
+
+    const itemsUpdate =
+    {
+        "itemID" : id,
+        "quantity" : quantity
+    }
+
+    fetch(url3, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(itemsUpdate)
+    })
+        .then(response => response.text())
+        .then(result => {
+            console.log(result);
+        })
+        .catch(error => console.error('Błąd:', error));
 
 }
 

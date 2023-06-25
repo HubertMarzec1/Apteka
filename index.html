@@ -66,6 +66,15 @@
   </div>
 </div>
 
+<!-- Modal dla description -->
+<div id="descriptionModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <img id="descriptionImg" src="img/cart-icon.png">
+    <div id="descriptionDiv"></div>
+  </div>
+</div>
+
 <section id="products" class="hidden">
   <section id="lekiprzeciwbolowe" class="category-section"></section>
   <section id="antybiotyki" class="category-section"></section>
@@ -92,7 +101,7 @@
     <label for="kod-input">Kod:</label>
     <input type="text" id="kod-input" maxlength="4" required>
 
-    <button id="recepta-button">Odbierz recepte</button>
+    <button id="recepta-button" class="hidden">Odbierz recepte</button>
   </form>
 </section>
 
@@ -119,12 +128,27 @@
 
       // Ukrywanie innych sekcji
       if (target === '#products') {
-        $('#o-nas, #kontakt').addClass('hidden');
+        $('#o-nas, #kontakt, #eRecepta').addClass('hidden');
         $('.category-section').removeClass('hidden');
       } else if (target === '#o-nas') {
-        $('#products, #kontakt').addClass('hidden');
+        $('#products, #kontakt, #eRecepta').addClass('hidden');
       } else if (target === '#kontakt') {
-        $('#products, #o-nas').addClass('hidden');
+        $('#products, #o-nas, #eRecepta').addClass('hidden');
+      } else if (target === '#eRecepta') {
+        $('#products, #o-nas, #kontakt').addClass('hidden');
+      }
+    });
+
+    // Sprawdzanie uzupełnienia pól pesel-input i kod-input
+    $('#pesel-input, #kod-input').on('input', function() {
+      var pesel = $('#pesel-input').val();
+      var kod = $('#kod-input').val();
+      var receptaButton = $('#recepta-button');
+
+      if (pesel !== '' && kod !== '') {
+        receptaButton.removeClass('hidden');
+      } else {
+        receptaButton.addClass('hidden');
       }
     });
   });
