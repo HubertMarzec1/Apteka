@@ -241,6 +241,9 @@ document.getElementById("submit-shipping").addEventListener("click", () => {
         .then(response => response.text())
         .then(result => {
             console.log(result);
+            if(result === "")
+                document.getElementById("modalWysylkaOpis").innerHTML = "Twoje zamówienie zostało pomyślnie zrealizowane. Dziękujemy za zakup!";
+            cartModal.style.display = 'none'; // Ukrycie modala
         })
         .catch(error => console.error('Błąd:', error));
 
@@ -266,25 +269,24 @@ document.getElementById("recepta-button").addEventListener("click", () => {
         .then(result => {
             cartItems = [];
             console.log(result);
-            const data = JSON.parse(result);
-            data.items.forEach(item => {
-                const item2 = { id: item.product.id, name: item.product.name, price: item.product.price / 100, quantity: item.quantity };
-                cartItems.push(item2);
-            });
 
-            updateCart();
+            const data = JSON.parse(result);
+            if (!data.hasOwnProperty('message'))
+            {
+                data.items.forEach(item => {
+                    const item2 = { id: item.product.id, name: item.product.name, price: item.product.price / 100, quantity: item.quantity };
+                    cartItems.push(item2);
+                    updateCart();
+                });
+            }else{
+                document.getElementById("modalcartModal").innerHTML = "Twoja recepta wygasła dnia " + data.message;
+            }
+
+
         })
         .catch(error => console.error('Błąd:', error));
 
 })
-
-
-
-/*
-for (let i = 1; i <= 9; i++) {
-    addNewProduct('Produkt '+i , 19.99 + i, 'img/cart-icon.png');
-}
-*/
 
 
 

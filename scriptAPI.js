@@ -3,7 +3,6 @@ let cartID;
 // Funkcja pobierająca dane z API
 function fetchData() {
     var url = 'https://pharmacy-umcs-2th7ejkd5a-lz.a.run.app/products';
-    //var set = new Set();
 
     fetch(url)
         .then(response => {
@@ -13,7 +12,6 @@ function fetchData() {
             return response.json();
         })
         .then(data => {
-            console.log(data);
             for (let i = 0; i < data.length; i++) {
                     addNewProduct(data[i].id, data[i].name, data[i].price, data[i].imageURL, data[i].category, data[i].description)
             }
@@ -21,7 +19,6 @@ function fetchData() {
         .catch(error => {
             console.log(error);
         });
-        //console.log(set);
 }
 
 function addNewCart() {
@@ -68,10 +65,9 @@ function addItemToCart(id, quantity) {
 }
 
 function removeItem(id) {
-    console.log(id);
     const itemsToRemove =
         {
-            "itemID": id
+            "productID": id
         };
 
     console.log(id);
@@ -102,7 +98,7 @@ function updateItem(id, quantity) {
 
     const itemsUpdate =
     {
-        "itemID" : id,
+        "productID" : id,
         "quantity" : quantity
     }
 
@@ -121,10 +117,8 @@ function updateItem(id, quantity) {
 
 }
 
-
-// Wywołanie funkcji pobierającej dane po załadowaniu strony
 window.onload = () => {
     fetchData();
     addNewCart();
 }
-console.log(cartID)
+
