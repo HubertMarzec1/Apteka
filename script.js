@@ -2,6 +2,10 @@
 const cartIcon = document.getElementById('cart-icon');
 const cartModal = document.getElementById('cartModal');
 const closeBtn = document.getElementsByClassName('close')[0];
+const closeBtnWysylka = document.getElementsByClassName('close')[1];
+
+const guzikWysylka = document.getElementById('recepta-button');
+const wysylkaModal = document.getElementById('shippingModal');
 
 // Obsługa kliknięcia na ikonę koszyka
 cartIcon.addEventListener('click', function() {
@@ -20,10 +24,16 @@ window.addEventListener('click', function(event) {
     }
 });
 
+guzikWysylka.addEventListener('click', function() {
+    wysylkaModal.style.display = 'block'; // Wyświetlenie modala
+});
+
+closeBtnWysylka.addEventListener('click', function() {
+    wysylkaModal.style.display = 'none'; // Ukrycie modala
+});
+
 // Przechowywanie produktów w koszyku
 let cartItems = [];
-
-// Przycisk "Dodaj do koszyka"
 
 
 // Dodanie produktu do koszyka
@@ -32,6 +42,7 @@ function addToCart(event) {
     const productName = product.querySelector('h3').textContent;
     const productPrice = parseFloat(product.querySelector('p').textContent.split(' ')[1]);
     const productQuantity = parseInt(product.querySelector('input').value);
+    const productId = product.querySelector('input').id;
 
     // Sprawdź, czy produkt już istnieje w koszyku
     const existingItem = cartItems.find(item => item.name === productName);
@@ -42,10 +53,10 @@ function addToCart(event) {
             existingItem.quantity += productQuantity;
         } else {
             // Jeśli produkt nie istnieje, dodaj go do koszyka
-            const item = { name: productName, price: productPrice, quantity: productQuantity };
+            const item = { id: productId, name: productName, price: productPrice, quantity: productQuantity };
             cartItems.push(item);
         }
-
+        addItemToCart(productId, productQuantity);
         updateCart();
     }
 }
@@ -62,6 +73,12 @@ function updateCart() {
     cartItems.forEach(item => {
         const li = document.createElement('li');
         li.textContent = `${item.name} - ${item.price} zł x ${item.quantity}`;
+
+        const removeButton = document.createElement('button');
+        removeButton.textContent = 'X';
+        removeButton.addEventListener('click', () => removeItemFromCart(item));
+        li.appendChild(removeButton);
+
         cartList.appendChild(li);
 
         total += item.price * item.quantity;
@@ -69,6 +86,17 @@ function updateCart() {
 
     cartTotal.textContent = `Suma: ${total.toFixed(2)} zł`;
 }
+
+function removeItemFromCart(item) {
+    // Usuwanie przedmiotu z koszyka
+    const index = cartItems.indexOf(item);
+    if (index > -1) {
+        cartItems.splice(index, 1);
+        updateCart();
+        removeItem(item.id);
+    }
+}
+
 
 const replacePolishLetters = (text) => {
     const polishLetters = {
@@ -110,10 +138,11 @@ function incrementQuantity(event) {
 }
 
 /*  DODAWNAIE PRODUKTÓW */
-function addNewProduct(name, price, imageUrl, categories) {
+function addNewProduct(id, name, price, imageUrl, categories) {
     // Tworzenie kontenera produktu
     const productContainer = document.createElement('div');
     productContainer.classList.add('product');
+
 
     // Dodawanie obrazka produktu
     const productImage = document.createElement('img');
@@ -147,6 +176,7 @@ function addNewProduct(name, price, imageUrl, categories) {
     quantityInput.min = '1';
     quantityInput.max = '99';
     quantityInput.value = '1';
+    quantityInput.setAttribute('id', id);
     quantityContainer.appendChild(quantityInput);
 
     const plusButton = document.createElement('button');
@@ -165,11 +195,39 @@ function addNewProduct(name, price, imageUrl, categories) {
     addToCartButton.addEventListener('click', addToCart);
     productContainer.appendChild(addToCartButton);
 
+
+
     // Dodawanie produktu do sekcji "products"
     const categoryClass = replacePolishLetters(categories).replace(/\s/g, '');
     const productsSection = document.getElementById(categoryClass);
+    console.log(categoryClass);
     productsSection.appendChild(productContainer);
+
 }
+
+
+document.getElementById("checkout-button").addEventListener("click", () => {
+    wysylkaModal.style.display = 'block'; // Wyświetlenie modala
+});
+
+
+document.getElementById("submit-shipping").addEventListener("click", () => {
+    const url3 = 'https://pharmacy-umcs-2th7ejkd5a-lz.a.run.app/cart/' + cartID + "/purchase";
+    console.log(url3);
+
+    fetch(url3, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    })
+        .then(response => response.text())
+        .then(result => {
+            console.log(result);
+        })
+        .catch(error => console.error('Błąd:', error));
+
+})
 
 /*
 for (let i = 1; i <= 9; i++) {
